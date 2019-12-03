@@ -4,7 +4,6 @@ import 'package:galilean_moons/satellite_data.dart';
 import 'package:galilean_moons/styles.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-// import 'package:flutter_picker/flutter_picker.dart';
 
 class MoonDisplay extends StatefulWidget {
   @override
@@ -37,9 +36,11 @@ class _MoonsState extends State<MoonDisplay> {
   CupertinoSegmentedControl _viewChangerWidget() {
     return CupertinoSegmentedControl(
       children: const <View, Widget>{
-        View.direct:   Padding(child: Text('Direct'),   padding: Styles.segPadding),
-        View.inverted: Padding(child: Text('Inverted'), padding: Styles.segPadding),
-        View.mirrored: Padding(child: Text('Mirrored'), padding: Styles.segPadding),
+        View.direct: Padding(child: Text('Direct'), padding: Styles.segPadding),
+        View.inverted:
+            Padding(child: Text('Inverted'), padding: Styles.segPadding),
+        View.mirrored:
+            Padding(child: Text('Mirrored'), padding: Styles.segPadding),
       },
       groupValue: selectedView,
       unselectedColor: Styles.backgroundColor,
@@ -60,18 +61,10 @@ class _MoonsState extends State<MoonDisplay> {
         onPressed: () {
           DatePicker.showDateTimePicker(context,
               showTitleActions: true,
-              minTime: data.endDate,
-              maxTime: data.startDate, 
-              onChanged: (date) {
-                setState(() {
-                  selectedDate = date;
-                });
-              }, 
-              onConfirm: (date) {
-                setState(() {
-                  selectedDate = date;
-                });
-              },
+              // minTime: data.endDate,
+              // maxTime: data.startDate,
+              onChanged: (date) {_setDate(date);}, 
+              onConfirm: (date) {_setDate(date);},
               currentTime: DateTime.now(),
               locale: LocaleType.en,
               theme: Styles.datePickerTheme);
@@ -80,6 +73,15 @@ class _MoonsState extends State<MoonDisplay> {
           dateToString(selectedDate),
           style: Styles.dateStyle,
         ));
+  }
+
+  void _setDate(date) {
+    if (date.isBefore(data.startDate) || date.isAfter(data.endDate)) {
+    } else {
+      setState(() {
+        selectedDate = date;
+      });
+    }
   }
 }
 
