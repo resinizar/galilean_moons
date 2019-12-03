@@ -16,74 +16,69 @@ class _MoonsState extends State<MoonDisplay> {
   SatelliteData data = SatelliteData();
   View selectedView = View.direct;
 
-  // void _showDatePicker() {
-  //   showModalBottomSheet(
-  //       context: context,
-  //       builder: (context) {
-  //         return Container(child: Text('Hello'));
-  //       });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
         backgroundColor: Styles.backgroundColor,
-        // backgroundColor: Colors.white,
         child: Column(
           children: <Widget>[
-            CupertinoSegmentedControl(
-              children: const <View, Widget>{
-                View.direct:
-                    Padding(child: Text('Direct'), padding: Styles.segPadding),
-                View.inverted: Padding(
-                    child: Text('Inverted'), padding: Styles.segPadding),
-                View.mirrored: Padding(
-                    child: Text('Mirrored'), padding: Styles.segPadding),
-              },
-              groupValue: selectedView,
-              unselectedColor: Styles.backgroundColor,
-              selectedColor: Styles.accentColor,
-              borderColor: Styles.backgroundColor,
-              pressedColor: Styles.backgroundColor,
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-              onValueChanged: (input) {
-                setState(() {
-                  selectedView = input;
-                });
-              },
-            ),
+            _viewChangerWidget(),
             Expanded(
                 child: Center(
                     child: CustomPaint(
               foregroundPainter:
                   SatellitePainter(data.getCoords(selectedDate), selectedView),
             ))),
-            FlatButton(
-                onPressed: () {
-                  DatePicker.showDateTimePicker(context,
-                      showTitleActions: true,
-                      minTime: data.endDate,
-                      maxTime: data.startDate, 
-                      onChanged: (date) {
-                        setState(() {
-                          selectedDate = date;
-                        });
-                      }, 
-                      onConfirm: (date) {
-                        setState(() {
-                          selectedDate = date;
-                        });
-                      }, 
-                      currentTime: DateTime.now(), 
-                      locale: LocaleType.en,
-                      theme: Styles.datePickerTheme
-                      );
-                },
-                child: Text(
-                      dateToString(selectedDate),
-                      style: Styles.dateStyle,
-                    )),
+            _currentDateWidget()
           ],
+        ));
+  }
+
+  CupertinoSegmentedControl _viewChangerWidget() {
+    return CupertinoSegmentedControl(
+      children: const <View, Widget>{
+        View.direct:   Padding(child: Text('Direct'),   padding: Styles.segPadding),
+        View.inverted: Padding(child: Text('Inverted'), padding: Styles.segPadding),
+        View.mirrored: Padding(child: Text('Mirrored'), padding: Styles.segPadding),
+      },
+      groupValue: selectedView,
+      unselectedColor: Styles.backgroundColor,
+      selectedColor: Styles.accentColor,
+      borderColor: Styles.backgroundColor,
+      pressedColor: Styles.backgroundColor,
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      onValueChanged: (input) {
+        setState(() {
+          selectedView = input;
+        });
+      },
+    );
+  }
+
+  FlatButton _currentDateWidget() {
+    return FlatButton(
+        onPressed: () {
+          DatePicker.showDateTimePicker(context,
+              showTitleActions: true,
+              minTime: data.endDate,
+              maxTime: data.startDate, 
+              onChanged: (date) {
+                setState(() {
+                  selectedDate = date;
+                });
+              }, 
+              onConfirm: (date) {
+                setState(() {
+                  selectedDate = date;
+                });
+              },
+              currentTime: DateTime.now(),
+              locale: LocaleType.en,
+              theme: Styles.datePickerTheme);
+        },
+        child: Text(
+          dateToString(selectedDate),
+          style: Styles.dateStyle,
         ));
   }
 }
