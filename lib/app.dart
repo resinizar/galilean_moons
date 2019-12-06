@@ -12,25 +12,58 @@ class MoonDisplay extends StatefulWidget {
 
 class _MoonsState extends State<MoonDisplay> {
   DateTime selectedDate = DateTime.now();
-  SatelliteData data = SatelliteData();
   View selectedView = View.direct;
+  bool dataLoaded = true;
+  SatelliteData data = SatelliteData();
+  bool nightMode = false;
+
+  bool neg(bool value) {
+    if (value == true) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-        backgroundColor: Styles.backgroundColor,
-        child: Column(
-          children: <Widget>[
-            _viewChangerWidget(),
-            Expanded(
-                child: Center(
-                    child: CustomPaint(
-              foregroundPainter:
-                  SatellitePainter(data.getCoords(selectedDate), selectedView),
-            ))),
-            _currentDateWidget()
-          ],
-        ));
+    if (dataLoaded == true) {
+      return CupertinoPageScaffold(
+          backgroundColor: Styles.backgroundColor,
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  _viewChangerWidget(),
+                  Spacer(),
+                  _nightModeWidget(),
+                ],
+              ),
+              _displayWidget(),
+              Row(
+                children: <Widget>[
+                  _currentDateWidget(),
+                  Spacer(),
+                  _nowWidget(),
+                ],
+              ),
+            ],
+          ));
+    } else {
+      return CupertinoPageScaffold(
+          backgroundColor: Styles.backgroundColor,
+          child:
+              Text('Loading...', style: Styles().getBigTextStyle(nightMode)));
+    }
+  }
+
+  Expanded _displayWidget() {
+    return Expanded(
+        child: Center(
+            child: CustomPaint(
+      foregroundPainter: SatellitePainter(
+          data.getCoords(selectedDate), selectedView, nightMode),
+    )));
   }
 
   CupertinoSegmentedControl _viewChangerWidget() {
@@ -44,7 +77,7 @@ class _MoonsState extends State<MoonDisplay> {
       },
       groupValue: selectedView,
       unselectedColor: Styles.backgroundColor,
-      selectedColor: Styles.accentColor,
+      selectedColor: Styles().getPrimaryOrNight(nightMode),
       borderColor: Styles.backgroundColor,
       pressedColor: Styles.backgroundColor,
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -56,32 +89,63 @@ class _MoonsState extends State<MoonDisplay> {
     );
   }
 
+  GestureDetector _nightModeWidget() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          nightMode = neg(nightMode);
+        });
+      },
+      child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          child: Icon(CupertinoIcons.eye_solid, color: Styles.nightColor)),
+    );
+  }
+
   FlatButton _currentDateWidget() {
     return FlatButton(
         onPressed: () {
           DatePicker.showDateTimePicker(context,
               showTitleActions: true,
-              // minTime: data.endDate,
-              // maxTime: data.startDate,
-              onChanged: (date) {_setDate(date);}, 
-              onConfirm: (date) {_setDate(date);},
-              currentTime: DateTime.now(),
+              minTime: data.endDate,
+              maxTime: data.startDate, onChanged: (date) {
+            _setDate(date);
+          }, onConfirm: (date) {
+            _setDate(date);
+          },
+              currentTime: selectedDate,
               locale: LocaleType.en,
-              theme: Styles.datePickerTheme);
+              theme: Styles().getPickerTheme(nightMode));
         },
         child: Text(
           dateToString(selectedDate),
-          style: Styles.dateStyle,
+          style: Styles().getBigTextStyle(nightMode),
         ));
   }
 
   void _setDate(date) {
     if (date.isBefore(data.startDate) || date.isAfter(data.endDate)) {
+      // Todo: add some notification
+
     } else {
       setState(() {
         selectedDate = date;
       });
     }
+  }
+
+  GestureDetector _nowWidget() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedDate = DateTime.now();
+        });
+      },
+      child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+          child: Icon(CupertinoIcons.refresh,
+              color: Styles().getPrimaryOrNight(nightMode))),
+    );
   }
 }
 
@@ -90,8 +154,9 @@ class SatellitePainter extends CustomPainter {
   double jDiam;
   final colors = [Styles.iColor, Styles.eColor, Styles.gColor, Styles.cColor];
   final widths = [10.0, 36.0, 56.0, 38.0];
+  bool nightMode;
 
-  SatellitePainter(DisplayInfo info, View view) {
+  SatellitePainter(DisplayInfo info, View view, bool nightMode) {
     Reflection ref = getReflection(view);
 
     Moon.values.forEach((moon) => info.moonOffsets[moon.index] = Offset(
@@ -100,6 +165,7 @@ class SatellitePainter extends CustomPainter {
 
     this.positions = info.moonOffsets;
     this.jDiam = info.jDiam;
+    this.nightMode = nightMode;
   }
 
   @override
@@ -132,7 +198,7 @@ class SatellitePainter extends CustomPainter {
 
     // draw the letter to label the moon
     final paragraphBuilder = ui.ParagraphBuilder(Styles.pStyle)
-      ..pushStyle(Styles.moonLabelStyle)
+      ..pushStyle(Styles().getMoonLabelStyle(nightMode))
       ..addText(getName(moon));
     final paragraph = paragraphBuilder.build();
     paragraph.layout(ui.ParagraphConstraints(width: widths[moon.index]));
