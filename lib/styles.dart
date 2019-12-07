@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart' as prefix0;
 import 'package:flutter/widgets.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_datetime_picker/src/datetime_picker_theme.dart'; // HACK
@@ -43,16 +44,25 @@ class Styles {
 
   ui.TextStyle getMoonLabelStyle(nightMode) {
     return ui.TextStyle(
-    color: getTextOrNight(nightMode),
-    fontSize: 12,
-    fontFamily: 'Roboto',
-  );
+      color: getTextOrNight(nightMode),
+      fontSize: 12,
+      fontFamily: 'Roboto',
+    );
   }
 
   TextStyle getBigTextStyle(nightMode) {
     return TextStyle(
-        color: getPrimaryOrNight(nightMode), fontSize: 28, fontFamily: 'Roboto');
+        color: getPrimaryOrNight(nightMode), 
+        fontSize: 28, 
+        fontFamily: 'Roboto'
+    );
   }
+
+  static final dialogStyle = TextStyle(
+    color: Color(0x00000000),
+    fontSize: 12,
+    fontFamily: 'Roboto',
+  );
 
   DatePickerTheme getPickerTheme(nightMode) {
     return DatePickerTheme(

@@ -4,6 +4,7 @@ import 'package:galilean_moons/satellite_data.dart';
 import 'package:galilean_moons/styles.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 
 class MoonDisplay extends StatefulWidget {
   @override
@@ -13,7 +14,6 @@ class MoonDisplay extends StatefulWidget {
 class _MoonsState extends State<MoonDisplay> {
   DateTime selectedDate = DateTime.now();
   View selectedView = View.direct;
-  bool dataLoaded = true;
   SatelliteData data = SatelliteData();
   bool nightMode = false;
 
@@ -27,34 +27,27 @@ class _MoonsState extends State<MoonDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    if (dataLoaded == true) {
-      return CupertinoPageScaffold(
-          backgroundColor: Styles.backgroundColor,
-          child: Column(
-            children: <Widget>[
-              Row(
-                children: <Widget>[
-                  _viewChangerWidget(),
-                  Spacer(),
-                  _nightModeWidget(),
-                ],
-              ),
-              _displayWidget(),
-              Row(
-                children: <Widget>[
-                  _currentDateWidget(),
-                  Spacer(),
-                  _nowWidget(),
-                ],
-              ),
-            ],
-          ));
-    } else {
-      return CupertinoPageScaffold(
-          backgroundColor: Styles.backgroundColor,
-          child:
-              Text('Loading...', style: Styles().getBigTextStyle(nightMode)));
-    }
+    return CupertinoPageScaffold(
+        backgroundColor: Styles.backgroundColor,
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                _viewChangerWidget(),
+                Spacer(),
+                _nightModeWidget(),
+              ],
+            ),
+            _displayWidget(),
+            Row(
+              children: <Widget>[
+                _currentDateWidget(),
+                Spacer(),
+                _nowWidget(),
+              ],
+            ),
+          ],
+        ));
   }
 
   Expanded _displayWidget() {
@@ -124,9 +117,55 @@ class _MoonsState extends State<MoonDisplay> {
   }
 
   void _setDate(date) {
-    if (date.isBefore(data.startDate) || date.isAfter(data.endDate)) {
-      // Todo: add some notification
-
+    if (date.isBefore(data.startDate)) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Date Limit Exceeded'),
+            content: Align(
+              child: Text('Please pick a date after ${dateToString(data.startDate)}'),
+              alignment: Alignment.centerLeft,
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text('Dismiss'),
+                isDefaultAction: true,
+                onPressed: () { 
+                  Navigator.pop(context, 'Dismiss');
+                  Navigator.pop(context);
+                  setState(() {
+                    selectedDate = data.startDate;
+                  });
+                }
+              )],
+          );
+        }
+      );
+    } else if (date.isAfter(data.endDate)){
+      showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Date Limit Exceeded'),
+            content: Text('Please pick a date before ${dateToString(data.endDate)}'
+            
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text('Dismiss'),
+                isDefaultAction: true,
+                onPressed: () { 
+                  Navigator.pop(context, 'Dismiss');
+                  Navigator.pop(context);
+                  setState(() {
+                    selectedDate = data.endDate;
+                  });
+                }
+              )],
+          );
+        }
+      );
     } else {
       setState(() {
         selectedDate = date;
@@ -233,9 +272,5 @@ class Reflection {
 }
 
 String dateToString(DateTime date) {
-  String fullString = date.toString();
-  int startInd = fullString.lastIndexOf(':');
-  int lastInd = fullString.length;
-  String dateString = fullString.replaceRange(startInd, lastInd, "");
-  return dateString;
+  return DateFormat.yMMMd().add_jm().format(date);
 }
