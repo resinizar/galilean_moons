@@ -209,6 +209,8 @@ class SatellitePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+
+    // draw jupiter
     canvas.drawCircle(
         Offset(0, 0),
         jDiam,
@@ -216,15 +218,17 @@ class SatellitePainter extends CustomPainter {
           ..color = Styles.jColor
           ..style = PaintingStyle.fill);
 
+    // draw each moon
     Moon.values.forEach((moon) => drawMoon(canvas, moon));
   }
 
   void drawMoon(Canvas canvas, Moon moon) {
+
     // draw the vertical line
     canvas.drawLine(
         positions[moon.index],
         Offset(positions[moon.index].dx,
-            positions[moon.index].dy + (moon.index + 1) * 10),
+            positions[moon.index].dy + (moon.index + 1) * 15),
         Paint()..color = Colors.grey);
 
     // draw the circle for the moon
@@ -244,7 +248,7 @@ class SatellitePainter extends CustomPainter {
     canvas.drawParagraph(
         paragraph,
         Offset(positions[moon.index].dx - widths[moon.index] / 2,
-            positions[moon.index].dy + (moon.index + 1) * 10));
+            positions[moon.index].dy + (moon.index + 1) * 15));
   }
 
   @override
