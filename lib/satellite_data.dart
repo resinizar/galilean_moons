@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:csv/csv.dart';
 import 'package:intl/intl.dart';
+import 'dart:math';
 // import 'package:flutter/services.dart' show rootBundle;
 // import 'package:path_provider/path_provider.dart';
 
@@ -61,7 +62,6 @@ class SatelliteData {
   // }
 
   SatelliteData() {
-    // Directory.current = fullPath;
     jData = _parseCSV(fullPath + 'data/jupiter.csv');
 
     Moon.values.forEach((m) => moonData[m.index] =
@@ -99,8 +99,9 @@ class SatelliteData {
 
       List<SpaceCoord> relCoords = new List(4);
       Moon.values.forEach((moon) => relCoords[moon.index] = SpaceCoord(
-          moonCoords[moon.index].ra - jCoord.ra,
-          moonCoords[moon.index].dec - jCoord.dec));
+          (moonCoords[moon.index].ra - jCoord.ra) * cos(jCoord.dec) * 15,
+          (moonCoords[moon.index].dec - jCoord.dec) 
+      ));
 
       // print('${relCoords[0].ra}, ${relCoords[0].dec}');
       // print('${relCoords[1].ra}, ${relCoords[1].dec}');
@@ -110,7 +111,7 @@ class SatelliteData {
 
       double jDiam = _getJupDiam(index);
 
-      double f = 15000; //Todo: figure out what factor should be
+      double f = 4500; //Todo: figure out what factor should be (currently fudged)
 
       List<Offset> offsets = new List(4);
       Moon.values.forEach((moon) => offsets[moon.index] =
@@ -157,7 +158,7 @@ class SatelliteData {
   }
 
   double _getJupDiam(int i) {
-    return 15.0;
+    return 12.0;
   }
 }
 
