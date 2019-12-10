@@ -85,7 +85,7 @@ class SatelliteData {
 
       double jDiam = _getJupDiam(index);
 
-      double f = 4500; //Todo: figure out what factor should be (currently fudged)
+      double f = 4200; //Todo: figure out what factor should be (currently fudged)
 
       List<Offset> offsets = new List(4);
       Moon.values.forEach((moon) => offsets[moon.index] =

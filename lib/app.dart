@@ -73,7 +73,7 @@ class _MoonsState extends State<MoonDisplay> {
       selectedColor: Styles().getPrimaryOrNight(nightMode),
       borderColor: Styles.backgroundColor,
       pressedColor: Styles.backgroundColor,
-      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       onValueChanged: (input) {
         setState(() {
           selectedView = input;
@@ -82,16 +82,12 @@ class _MoonsState extends State<MoonDisplay> {
     );
   }
 
-  GestureDetector _nightModeWidget() {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          nightMode = neg(nightMode);
-        });
+  FlatButton _nightModeWidget() {
+    return FlatButton(
+      child: Icon(CupertinoIcons.eye_solid, color: Styles.nightColor),
+      onPressed: () {
+        setState(() => nightMode = neg(nightMode));
       },
-      child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-          child: Icon(CupertinoIcons.eye_solid, color: Styles.nightColor)),
     );
   }
 
@@ -157,17 +153,12 @@ class _MoonsState extends State<MoonDisplay> {
         });
   }
 
-  GestureDetector _nowWidget() {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedDate = DateTime.now();
-        });
+  FlatButton _nowWidget() {
+    return FlatButton(
+      child: Icon(CupertinoIcons.refresh, color: Styles().getPrimaryOrNight(nightMode)),
+      onPressed: () {
+        setState(() => selectedDate = DateTime.now());
       },
-      child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-          child: Icon(CupertinoIcons.refresh,
-              color: Styles().getPrimaryOrNight(nightMode))),
     );
   }
 

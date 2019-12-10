@@ -43,7 +43,7 @@ class SatellitePainter extends CustomPainter {
         positions[moon.index],
         Offset(positions[moon.index].dx,
             positions[moon.index].dy + (moon.index + 1) * 18),
-        Paint()..color = Styles.textColorShade);
+        Paint()..color = Styles.moonLabelLineColor);
 
     // draw the circle for the moon
     canvas.drawCircle(
