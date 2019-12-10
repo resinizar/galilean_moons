@@ -50,7 +50,7 @@ class Styles {
   TextStyle getBigTextStyle(nightMode) {
     return TextStyle(
         color: getPrimaryOrNight(nightMode), 
-        fontSize: 28, 
+        fontSize: 24, 
         fontFamily: 'Roboto',
         fontWeight: FontWeight.w300,
     );

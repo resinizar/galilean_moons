@@ -192,7 +192,7 @@ class SatellitePainter extends CustomPainter {
   List<Offset> positions;
   double jDiam;
   final colors = [Styles.iColor, Styles.eColor, Styles.gColor, Styles.cColor];
-  final widths = [10.0, 36.0, 56.0, 38.0];
+  final widths = [11.0, 40.0, 61.0, 42.0];
   bool nightMode;
 
   SatellitePainter(DisplayInfo info, View view, bool nightMode) {

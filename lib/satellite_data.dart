@@ -1,10 +1,8 @@
-import 'dart:io';
 import 'dart:ui';
 import 'package:csv/csv.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
-// import 'package:flutter/services.dart' show rootBundle;
-// import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 enum Moon { io, europa, ganymede, callisto }
 
@@ -30,53 +28,29 @@ class SatelliteData {
   DateTime startDate;
   Duration intervalTime;
 
-  // SatelliteData() {
-  //   Moon.values.forEach((m) => _readMoonFile(m));
-  //   Future<String> content = rootBundle.loadString('assets/data.json');
+  SatelliteData() {    
+    // load moon data
+    Moon.values.forEach((m) {
+      final content = _getFileContent(getName(m).toLowerCase());
+      content.then((content) {
+        moonData[m.index] = const CsvToListConverter().convert(content);
+      });
+    });
 
-  //   // File(fullPath + 'data/jupiter.csv').readAsString();
-  //   content.then((content) {
-  //     jData = const CsvToListConverter().convert(content);
+    // load jupiter data
+    final content = _getFileContent('jupiter');
+    content.then((content) {
+      jData = const CsvToListConverter().convert(content);
 
-  //     // int numRows = jData.length;
-  //     // startDate = DateTime.parse(jData[1][0]);
-  //     startDate = DateTime.parse("2019-11-07 00:00");
-  //     // endDate = DateTime.parse(jData[numRows-1][0]);
-  //     endDate = DateTime.parse("2020-01-07 00:00");
-  //     // intervalTime = DateTime.parse(jData[2][0]).difference(startDate);
-  //     intervalTime = DateTime.parse("2019-11-07 03:00").difference(startDate);
-  //   });
-  // }
-
-  // Future<String> get _localPath async {
-  //   final directory = await getApplicationDocumentsDirectory();
-  //   return directory.path;
-  // }
-
-  // void _readMoonFile(Moon m) {
-  //   final file = await _localFile;
-  //   Future<String> content =
-  //       File(fullPath + 'data/${getName(m).toLowerCase()}.csv').readAsString();
-  //   content.then((content) =>
-  //       moonData[m.index] = const CsvToListConverter().convert(content));
-  // }
-
-  SatelliteData() {
-    jData = _parseCSV(fullPath + 'data/jupiter.csv');
-
-    Moon.values.forEach((m) => moonData[m.index] =
-        _parseCSV(fullPath + 'data/${getName(m).toLowerCase()}.csv'));
-
-    int numRows = jData.length;
-    startDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[1][0]);
-    endDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[numRows-1][0]);
-    intervalTime = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[2][0]).difference(startDate);
+      int numRows = jData.length;
+      startDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[1][0]);
+      endDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[numRows-1][0]);
+      intervalTime = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[2][0]).difference(startDate);
+    });
   }
 
-  List<List<dynamic>> _parseCSV(String path) {
-    String content = File(path).readAsStringSync();
-    List<List<dynamic>> data = const CsvToListConverter().convert(content);
-    return data;
+  Future<String> _getFileContent(String filename) async {
+    return await rootBundle.loadString('data/$filename.csv');
   }
 
   DisplayInfo getCoords(DateTime date) {
@@ -100,7 +74,7 @@ class SatelliteData {
       List<SpaceCoord> relCoords = new List(4);
       Moon.values.forEach((moon) => relCoords[moon.index] = SpaceCoord(
           (moonCoords[moon.index].ra - jCoord.ra) * cos(jCoord.dec) * 15,
-          (moonCoords[moon.index].dec - jCoord.dec) 
+          (moonCoords[moon.index].dec - jCoord.dec) * -1 // why do I need -1?
       ));
 
       // print('${relCoords[0].ra}, ${relCoords[0].dec}');
