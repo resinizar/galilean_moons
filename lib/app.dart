@@ -15,6 +15,7 @@ class _MoonsState extends State<MoonDisplay> {
   DateTime selectedDate = DateTime.now();
   View selectedView = View.direct;
   SatelliteData data = SatelliteData();
+
   bool nightMode = false;
 
   bool neg(bool value) {
@@ -91,25 +92,28 @@ class _MoonsState extends State<MoonDisplay> {
     );
   }
 
-  FlatButton _currentDateWidget() {
-    return FlatButton(
-        onPressed: () {
-          DatePicker.showDateTimePicker(context,
-              showTitleActions: true,
-              minTime: data.endDate,
-              maxTime: data.startDate, onChanged: (date) {
-            _setDate(date);
-          }, onConfirm: (date) {
-            _setDate(date);
-          },
-              currentTime: selectedDate,
-              locale: LocaleType.en,
-              theme: Styles().getPickerTheme(nightMode));
-        },
-        child: Text(
-          _dateToString(selectedDate),
+  GestureDetector _currentDateWidget() {
+    return GestureDetector(
+      child: Padding(
+        child: Text(_dateToString(selectedDate),
           style: Styles().getBigTextStyle(nightMode),
-        ));
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 10)
+      ),
+      onTap: () {
+        DatePicker.showDateTimePicker(context,
+            showTitleActions: true,
+            minTime: data.endDate,
+            maxTime: data.startDate, onChanged: (date) {
+          _setDate(date);
+        }, onConfirm: (date) {
+          _setDate(date);
+        },
+            currentTime: selectedDate,
+            locale: LocaleType.en,
+            theme: Styles().getPickerTheme(nightMode));
+      },
+    );
   }
 
   void _setDate(date) {
@@ -118,7 +122,8 @@ class _MoonsState extends State<MoonDisplay> {
           'Please pick a date after ${_dateToString(data.startDate)}',
           data.startDate);
     } else if (date.isAfter(data.endDate)) {
-      showAlertDialog('Please pick a date before ${_dateToString(data.endDate)}',
+      showAlertDialog(
+          'Please pick a date before ${_dateToString(data.endDate)}',
           data.endDate);
     } else {
       setState(() {
@@ -155,7 +160,8 @@ class _MoonsState extends State<MoonDisplay> {
 
   FlatButton _nowWidget() {
     return FlatButton(
-      child: Icon(CupertinoIcons.refresh, color: Styles().getPrimaryOrNight(nightMode)),
+      child: Icon(CupertinoIcons.refresh,
+          color: Styles().getPrimaryOrNight(nightMode)),
       onPressed: () {
         setState(() => selectedDate = DateTime.now());
       },
