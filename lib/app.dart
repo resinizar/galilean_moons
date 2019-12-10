@@ -33,16 +33,16 @@ class _MoonsState extends State<MoonDisplay> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                _viewChangerWidget(),
-                Spacer(),
+                Expanded(child: _viewChangerWidget()),
+                // Spacer(),
                 _nightModeWidget(),
               ],
             ),
             _displayWidget(),
             Row(
               children: <Widget>[
-                _currentDateWidget(),
-                Spacer(),
+                Expanded(child: _currentDateWidget()),
+                // Spacer(),
                 _nowWidget(),
               ],
             ),
@@ -118,59 +118,43 @@ class _MoonsState extends State<MoonDisplay> {
 
   void _setDate(date) {
     if (date.isBefore(data.startDate)) {
-      showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            title: Text('Date Limit Exceeded'),
-            content: Align(
-              child: Text('Please pick a date after ${dateToString(data.startDate)}'),
-              alignment: Alignment.centerLeft,
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: Text('Dismiss'),
-                isDefaultAction: true,
-                onPressed: () { 
-                  Navigator.pop(context, 'Dismiss');
-                  Navigator.pop(context);
-                  setState(() {
-                    selectedDate = data.startDate;
-                  });
-                }
-              )],
-          );
-        }
-      );
-    } else if (date.isAfter(data.endDate)){
-      showCupertinoDialog(
-        context: context,
-        builder: (context) {
-          return CupertinoAlertDialog(
-            title: Text('Date Limit Exceeded'),
-            content: Text('Please pick a date before ${dateToString(data.endDate)}'
-            
-            ),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                child: Text('Dismiss'),
-                isDefaultAction: true,
-                onPressed: () { 
-                  Navigator.pop(context, 'Dismiss');
-                  Navigator.pop(context);
-                  setState(() {
-                    selectedDate = data.endDate;
-                  });
-                }
-              )],
-          );
-        }
-      );
+      showAlertDialog(
+          'Please pick a date after ${dateToString(data.startDate)}',
+          data.startDate);
+    } else if (date.isAfter(data.endDate)) {
+      showAlertDialog('Please pick a date before ${dateToString(data.endDate)}',
+          data.endDate);
     } else {
       setState(() {
         selectedDate = date;
       });
     }
+  }
+
+  void showAlertDialog(String message, DateTime resetDate) {
+    showCupertinoDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('Date Limit Exceeded'),
+            content: Align(
+              child: Text(message),
+              alignment: Alignment.centerLeft,
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                  child: Text('Dismiss'),
+                  isDefaultAction: true,
+                  onPressed: () {
+                    Navigator.pop(context, 'Dismiss');
+                    Navigator.pop(context);
+                    setState(() {
+                      selectedDate = resetDate;
+                    });
+                  })
+            ],
+          );
+        });
   }
 
   GestureDetector _nowWidget() {
@@ -209,7 +193,6 @@ class SatellitePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-
     // draw jupiter
     canvas.drawCircle(
         Offset(0, 0),
@@ -223,12 +206,11 @@ class SatellitePainter extends CustomPainter {
   }
 
   void drawMoon(Canvas canvas, Moon moon) {
-
     // draw the vertical line
     canvas.drawLine(
         positions[moon.index],
         Offset(positions[moon.index].dx,
-            positions[moon.index].dy + (moon.index + 1) * 15),
+            positions[moon.index].dy + (moon.index + 1) * 18),
         Paint()..color = Colors.grey);
 
     // draw the circle for the moon
@@ -248,7 +230,7 @@ class SatellitePainter extends CustomPainter {
     canvas.drawParagraph(
         paragraph,
         Offset(positions[moon.index].dx - widths[moon.index] / 2,
-            positions[moon.index].dy + (moon.index + 1) * 15));
+            positions[moon.index].dy + (moon.index + 1) * 18));
   }
 
   @override
