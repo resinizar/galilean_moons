@@ -1,11 +1,14 @@
 # galilean_moons
+The app is tested for iphone 7 and 8. 
 
-![home page](/screenshots/home.png)
+## The homescreen
+<img src="/screenshots/home.png" height="400" />
 
-![home page](/screenshots/change_date.gif)
+## Changing the date
+<img src="/screenshots/change_date.gif" height="400" />
 
-![home page](/screenshots/nightmode.gif)
+## Nightmode
+<img src="/screenshots/nightmode.gif" height="400" />
 
-![home page](/screenshots/view.gif)
-
-
+## View
+<img src="/screenshots/view.gif" height="400" />
