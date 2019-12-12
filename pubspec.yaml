@@ -50,6 +50,7 @@ flutter:
     - data/europa.csv
     - data/callisto.csv
     - data/ganymede.csv
+    - images/launchJupiter.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

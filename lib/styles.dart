@@ -11,6 +11,7 @@ class Styles {
   static const Color textColor = Color(0xffe2e0e5);
   static const Color textColorShade = Color(0xff959499);
   static const Color moonLabelLineColor = Color(0xff6b6a6d);
+  static const Color launchBackground = Color(0xff152f58);
 
   static const Color jColor = Color(0xffe0b05e);
   static const Color iColor = Color(0xfff9ea77);

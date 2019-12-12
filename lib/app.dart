@@ -15,8 +15,8 @@ class _MoonsState extends State<MoonDisplay> {
   DateTime selectedDate = DateTime.now();
   View selectedView = View.direct;
   SatelliteData data = SatelliteData();
-
   bool nightMode = false;
+  bool loading = true;
 
   bool neg(bool value) {
     if (value == true) {
@@ -28,6 +28,14 @@ class _MoonsState extends State<MoonDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return _startScreen();
+    } else {
+      return _mainDisplay();
+    }
+  }
+
+  CupertinoPageScaffold _mainDisplay() {
     return CupertinoPageScaffold(
         backgroundColor: Styles.backgroundColor,
         child: Column(
@@ -35,7 +43,6 @@ class _MoonsState extends State<MoonDisplay> {
             Row(
               children: <Widget>[
                 Expanded(child: _viewChangerWidget()),
-                // Spacer(),
                 _nightModeWidget(),
               ],
             ),
@@ -43,12 +50,31 @@ class _MoonsState extends State<MoonDisplay> {
             Row(
               children: <Widget>[
                 Expanded(child: _currentDateWidget()),
-                // Spacer(),
                 _nowWidget(),
               ],
             ),
           ],
         ));
+  }
+
+  Widget _startScreen() {
+    return CupertinoPageScaffold(
+      backgroundColor: Styles.launchBackground,
+      child: Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(top: 100),
+          child: Image(
+            image: AssetImage('images/launchJupiter.png')
+          ),
+        ),
+        CupertinoButton(
+        child: Text('Start', style: Styles().getBigTextStyle(nightMode)),
+        onPressed: () => setState(() => loading = false),
+        ),
+      ],
+    )
+    );
   }
 
   Expanded _displayWidget() {
@@ -95,11 +121,11 @@ class _MoonsState extends State<MoonDisplay> {
   GestureDetector _currentDateWidget() {
     return GestureDetector(
       child: Padding(
-        child: Text(_dateToString(selectedDate),
-          style: Styles().getBigTextStyle(nightMode),
-        ),
-        padding: EdgeInsets.symmetric(horizontal: 10)
-      ),
+          child: Text(
+            _dateToString(selectedDate),
+            style: Styles().getBigTextStyle(nightMode),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 10)),
       onTap: () {
         DatePicker.showDateTimePicker(context,
             showTitleActions: true,
