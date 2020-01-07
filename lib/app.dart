@@ -5,6 +5,8 @@ import 'package:galilean_moons/styles.dart';
 import 'satellite_painter.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:csv/csv.dart';
 
 class MoonDisplay extends StatefulWidget {
   @override
@@ -28,11 +30,13 @@ class _MoonsState extends State<MoonDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return _startScreen();
-    } else {
-      return _mainDisplay();
-    }
+    return _mainDisplay();
+    // if (loading) {
+    //   // _loadData();
+    //   return _loadingScreen();
+    // } else {
+    //   return _mainDisplay();
+    // }
   }
 
   CupertinoPageScaffold _mainDisplay() {
@@ -76,6 +80,44 @@ class _MoonsState extends State<MoonDisplay> {
     )
     );
   }
+
+  // Widget _loadingScreen() {
+  //   return Center(child: CircularProgressIndicator());
+  // }
+
+  // void _loadData() {
+  //       // load jupiter data
+  //   final content = _getFileContent('jupiter');
+  //   content.then((content) {
+  //     data.jData = const CsvToListConverter().convert(content);
+
+  //     int numRows = data.jData.length;
+  //     data.startDate = DateFormat('yyyy-MMM-dd hh:mm').parse(data.jData[1][0]);
+  //     data.endDate = DateFormat('yyyy-MMM-dd hh:mm').parse(data.jData[numRows - 1][0]);
+  //     data.intervalTime = DateFormat('yyyy-MMM-dd hh:mm')
+  //         .parse(data.jData[2][0])
+  //         .difference(data.startDate);
+
+  //         // load moon data
+  //   Moon.values.forEach((m) {
+  //     final content = _getFileContent(getName(m).toLowerCase());
+  //     content.then((content) {
+  //       print('loading moon ${m.index}');
+  //       data.moonData[m.index] = const CsvToListConverter().convert(content);
+
+  //       if (data.moonData[Moon.callisto.index] != null) {
+  //       setState(() {
+  //         print('done loading moons');
+  //         loading = false;
+  //       });
+  //       }});
+  //   });
+  //   });
+  // }
+
+  // Future<String> _getFileContent(String filename) async {
+  //   return await rootBundle.loadString('data/$filename.csv');
+  // }
 
   Expanded _displayWidget() {
     return Expanded(

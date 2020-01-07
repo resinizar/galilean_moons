@@ -1,7 +1,7 @@
 # galilean_moons
 The app is tested for iphone 7 and 8. 
 
-## The homescreen
+## Home screen
 <img src="/screenshots/home.png" height="400" />
 
 ## Changing the date

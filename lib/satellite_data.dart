@@ -3,6 +3,7 @@ import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
+import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
 
 enum Moon { io, europa, ganymede, callisto }
@@ -22,38 +23,59 @@ String getName(Moon moon) {
 }
 
 class SatelliteData {
-  String fullPath = '/Users/appa/2019_Fall/UX/galilean_moons/';
+  // String fullPath = '/Users/appa/2019_Fall/UX/galilean_moons/';
   List<List<dynamic>> jData;
   List<List<List<dynamic>>> moonData = List(4);
   DateTime endDate;
   DateTime startDate;
   Duration intervalTime;
 
-  Future<String> _getFileContent(String filename) async {
-    return await rootBundle.loadString('data/$filename.csv');
+  // Future<String> _getFileContent(String filename) async {
+  //   return await rootBundle.loadString('data/$filename.csv');
+  // }
+
+  // SatelliteData() {
+  //   // load jupiter data
+  //   final content = _getFileContent('jupiter');
+  //   content.then((content) {
+  //     jData = const CsvToListConverter().convert(content);
+
+  //     int numRows = jData.length;
+  //     startDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[1][0]);
+  //     endDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[numRows - 1][0]);
+  //     intervalTime = DateFormat('yyyy-MMM-dd hh:mm')
+  //         .parse(jData[2][0])
+  //         .difference(startDate);
+  //   });
+
+  //   // load moon data
+  //   Moon.values.forEach((m) {
+  //     final content = _getFileContent(getName(m).toLowerCase());
+  //     content.then((content) {
+  //       moonData[m.index] = const CsvToListConverter().convert(content);
+  //     });
+  //   });
+  // }
+
+  List<List<dynamic>> _parseCSV(String path) {
+    String content = File(path).readAsStringSync();
+    List<List<dynamic>> data = const CsvToListConverter().convert(content);
+    return data;
   }
 
   SatelliteData() {
-    // load jupiter data
-    final content = _getFileContent('jupiter');
-    content.then((content) {
-      jData = const CsvToListConverter().convert(content);
+    Directory.current = '/Users/appa/2019_Fall/UX/galilean_moons/';
+    jData = _parseCSV('data/jupiter.csv');
 
-      int numRows = jData.length;
-      startDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[1][0]);
-      endDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[numRows - 1][0]);
-      intervalTime = DateFormat('yyyy-MMM-dd hh:mm')
-          .parse(jData[2][0])
-          .difference(startDate);
-    });
+    Moon.values.forEach((m) => moonData[m.index] =
+        _parseCSV('data/${getName(m).toLowerCase()}.csv'));
 
-    // load moon data
-    Moon.values.forEach((m) {
-      final content = _getFileContent(getName(m).toLowerCase());
-      content.then((content) {
-        moonData[m.index] = const CsvToListConverter().convert(content);
-      });
-    });
+    int numRows = jData.length;
+    startDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[1][0]);
+    endDate = DateFormat('yyyy-MMM-dd hh:mm').parse(jData[numRows - 1][0]);
+    intervalTime = DateFormat('yyyy-MMM-dd hh:mm')
+        .parse(jData[2][0])
+        .difference(startDate);
   }
 
   DisplayInfo getCoords(DateTime date) {
